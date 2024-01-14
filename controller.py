@@ -25,29 +25,3 @@ def get_health_state() -> schemas.HealthState:
             git_describe="v1.0.0"
         )
     )
-
-
-# Function to create prompt from request body
-def create_prompt(request_body: schemas.CompletionRequest):
-    language, prefix, suffix = None, None, None
-
-    if request_body.language is not None:
-        language = request_body.language
-    if request_body.segments is not None:
-        prefix = request_body.segments.get("prefix")
-        suffix = request_body.segments.get("suffix")
-
-    if prefix is None and suffix is None:
-        return ""
-
-    prompt = """# Generate 5 code snippets for the following prompt. The generated code snippets should follow these rules:
-    1. The generated code snippets should be valid code in the language specified.
-    2. The generated code snippets should be related to prefix or suffix.
-    3. The generate code snippets should only contain code, No need to include the prompt, language, prefix, suffix, etc.
-    4. Separate each code snippet with "|||"
-
-    # Language: {}
-    # Prefix code: {}
-    # Suffix code: {}
-    """.format(language, prefix, suffix)
-    return prompt
