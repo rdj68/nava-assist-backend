@@ -12,13 +12,10 @@ load_dotenv()
 geckoClient = GeckoClient()
 bisonClient = BisonClient()
 
+
 @app.post("/v1/completions")
 async def completion(request_body: schemas.CompletionRequest):
     logging.debug("Completion request received")
-
-    def get_completion_response(text):
-        completion_response = schemas.CompletionResponse(text=text)
-        return completion_response
 
     prefix = request_body.segments.get("prefix", None)
     suffix = request_body.segments.get("suffix", None)
@@ -26,6 +23,7 @@ async def completion(request_body: schemas.CompletionRequest):
     response = await geckoClient.prompt(prefix, suffix=suffix)
     completion_response = get_completion_response(response.text)
     return completion_response
+
 
 
 @app.get("/v1/health", response_model=schemas.HealthState)
@@ -65,13 +63,13 @@ async def chat(request_body: schemas.chatRequest):
     prompt = json.dumps(prompt_dict)
     response = await bisonClient.prompt(prompt)
     chat_response = schemas.ChatResponse(
-        id = str(uuid.uuid4()),
+        id=str(uuid.uuid4()),
         response=response.text,
         debug_data=None
     )
     return chat_response
 
-    
+
 # class SearchResponse(BaseModel):
 #     num_hits: int
 #     hits: List[dict]
@@ -87,7 +85,8 @@ async def event(request_body: schemas.LogEventRequest):
     logging.debug(request_body)
     pass
 
+
 def get_completion_response(text: str):
     choices = [{"index": 0, "text": text}]
 
-    return schemas.CompletionResponse(id=uuid.uuid4(), choices=choices, debug_data=None)
+    return schemas.CompletionResponse(id=str(uuid.uuid4()), choices=choices, debug_data=None)
