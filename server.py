@@ -1,12 +1,11 @@
-from fastapi import FastAPI, Body, Query
-from pydantic import BaseModel, Field
-from typing import List, Optional
+from fastapi import FastAPI
 from controller import get_health_state
 from dotenv import load_dotenv
 from aiModelClient.Clients import GeckoClient, BisonClient
 import schemas
 import uuid
 import json
+import logging
 
 app = FastAPI()
 load_dotenv()
@@ -15,9 +14,15 @@ bisonClient = BisonClient()
 
 @app.post("/v1/completions")
 async def completion(request_body: schemas.CompletionRequest):
-    print("Completion request received.")
-    prefix = request_body.segments.get("prefix", None) if request_body.segments else None
-    suffix = request_body.segments.get("suffix", None) if request_body.segments else None
+    logging.debug("Completion request received")
+
+    def get_completion_response(text):
+        completion_response = schemas.CompletionResponse(text=text)
+        return completion_response
+
+    prefix = request_body.segments.get("prefix", None)
+    suffix = request_body.segments.get("suffix", None)
+
     response = await geckoClient.prompt(prefix, suffix=suffix)
     completion_response = get_completion_response(response.text)
     return completion_response
@@ -79,21 +84,10 @@ async def chat(request_body: schemas.chatRequest):
 
 @app.post("/v1/events")
 async def event(request_body: schemas.LogEventRequest):
-    print(event)
+    logging.debug(request_body)
     pass
 
-# function to get completion response from text
 def get_completion_response(text: str):
-    choices = []
-    choices.append({
-        "index": 0,
-        "text": text
-    })
+    choices = [{"index": 0, "text": text}]
 
-    completion_response = schemas.CompletionResponse(
-        id = str(uuid.uuid4()),
-        choices=choices,
-        debug_data=None
-    )
-
-    return completion_response
+    return schemas.CompletionResponse(id=uuid.uuid4(), choices=choices, debug_data=None)
