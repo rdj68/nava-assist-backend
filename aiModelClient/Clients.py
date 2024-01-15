@@ -3,20 +3,9 @@ from vertexai.language_models import CodeGenerationModel, TextGenerationModel
 from google.oauth2 import service_account
 import os
 
-class Config:
-    def __init__(self):
-        self.project_id = os.environ.get('GOOGLE_CLOUD_PROJECT_ID')
-        self.location = os.environ.get('GOOGLE_CLOUD_LOCATION')
-        file_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        self.credentials = service_account.Credentials.from_service_account_file(file_path)
-
-
 class GeckoClient:
     def __init__(self):
-        self.config = Config()
-        vertexai.init(project=self.config.project_id,
-                      location=self.config.location, 
-                      credentials=self.config.credentials)
+        vertexai.init()
         self.model = CodeGenerationModel.from_pretrained("code-gecko@latest")
 
     async def prompt(self, prefix, suffix):
@@ -30,10 +19,7 @@ class GeckoClient:
 
 class BisonClient:
     def __init__(self):
-        self.config = Config()
-        vertexai.init(project=self.config.project_id,
-                      location=self.config.location, 
-                      credentials=self.config.credentials)
+        vertexai.init()
         self.model = TextGenerationModel.from_pretrained("text-bison@002")
 
     async def prompt(self, promptMessage):
