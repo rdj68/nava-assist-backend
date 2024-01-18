@@ -1,12 +1,12 @@
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
-from controller import get_health_state
 from dotenv import load_dotenv
 from aiModelClient.Clients import GeckoClient, BisonClient, GeminiClient
+from controller import get_health_state
 import schemas
 import uuid
 import logging
 import os
+
 
 app = FastAPI()
 load_dotenv()
@@ -14,6 +14,7 @@ load_dotenv()
 geckoClient = GeckoClient()
 bisonClient = BisonClient()
 geminiClient = GeminiClient()
+
 
 @app.post("/v1/completions")
 async def completion(request_body: schemas.CompletionRequest):
@@ -37,19 +38,21 @@ def read_health():
 async def chat(request_body: schemas.chatRequest):
     user_query = request_body.userQuery
     context_params = request_body.context
-    entireContent = {context_params.get('entireContent', {})} if context_params else ''
-    selectedContent = {context_params.get('selectedContent', {})} if context_params else ''
-    
+    entireContent = {context_params.get(
+        'entireContent', {})} if context_params else ''
+    selectedContent = {context_params.get(
+        'selectedContent', {})} if context_params else ''
+
     prompt = "{" + \
         f"query: {user_query}," + \
         "context_params: { " + \
-            f"file_extension: {os.path.splitext(context_params.get('filePath', '')) if context_params else ''}," + \
-            f"file_path: {context_params.get('filePath', {}) if context_params else ''}," + \
-            f"selected_code: {selectedContent}," + \
-            f"entire_code: {entireContent}," + \
-            "if query is related to the context then consider whole expression as prompt otherwise consider only query as prompt" + \
+        f"file_extension: {os.path.splitext(context_params.get('filePath', '')) if context_params else ''}," + \
+        f"file_path: {context_params.get('filePath', {}) if context_params else ''}," + \
+        f"selected_code: {selectedContent}," + \
+        f"entire_code: {entireContent}," + \
+        "if query is related to the context then consider whole expression as prompt otherwise consider only query as prompt" + \
         "}" + \
-    "}" 
+        "}"
     response = await bisonClient.prompt(prompt)
     chat_response = schemas.ChatResponse(
         id=str(uuid.uuid4()),
@@ -64,7 +67,7 @@ async def designerchat(request_body: schemas.DesignerChatRequest):
     prompt = "{" + \
         f"message: {request_body.query}," + \
         f"context: {request_body.context}" + \
-    "}" 
+        "}"
     responses = await geminiClient.prompt(prompt)
     all_text_responses = []
     async for response in responses:
@@ -74,9 +77,9 @@ async def designerchat(request_body: schemas.DesignerChatRequest):
                     for part in candidate.content.parts:
                         if part.text:
                             all_text_responses.append(part.text)
-    
+
     combined_response = ' '.join(all_text_responses)
-    
+
     chat_response = schemas.DesignerChatResponse(
         id=str(uuid.uuid4()),
         response=combined_response,

@@ -29,15 +29,3 @@ To run this project, follow these steps:
    ```
 
    This command starts the server using Uvicorn.
-
-## Contributing
-
-If you would like to contribute to this project, please follow the [contribution guidelines](CONTRIBUTING.md).
-
-# Note
-The latency of the gemini api is slow so configure the tabbyML extension to incerase the completion request timeout. Below is the command to open the config file of tabby agent. Uncomment the Completion section and change timeout from 4000ms to 15000ms. Reload the extension after changes in file.
-
-   ```bash
-   nano ~/.tabby-client/agent/config.toml
-   ```
- 

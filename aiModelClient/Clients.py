@@ -44,14 +44,3 @@ class GeminiClient:
     async def prompt(self, promptMessage):
         response = await self.chat.send_message_async(promptMessage, stream=True)
         return response
-
-# class GeminiClientGenAi:
-#     def __init__(self):
-#         GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
-#         genai.configure(api_key=GOOGLE_API_KEY)
-#         self.model = genai.GenerativeModel('gemini-pro')
-#         self.chat = self.model.start_chat()
-
-#     def prompt(self, promptMessage):
-#         response = self.chat.send_message(promptMessage, stream=True)
-#         return response
