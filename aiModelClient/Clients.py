@@ -14,10 +14,7 @@ class Config:
 
 class GeckoClient:
     def __init__(self):
-        self.config = Config()
-        vertexai.init(project=self.config.project_id,
-                      location=self.config.location, 
-                      credentials=self.config.credentials)
+        vertexai.init()
         self.model = CodeGenerationModel.from_pretrained("code-gecko@latest")
 
     async def prompt(self, prefix, suffix):
