@@ -15,12 +15,23 @@ class CompletionResponse(BaseModel):
 
 # chat api request and response
 class chatRequest(BaseModel):
-    query: str
+    userQuery: Optional[str] = None
     context: Optional[dict] = None
     user: Optional[str] = None
     debug_options: Optional[dict] = None
     
 class ChatResponse(BaseModel):
+    id: str
+    response: str
+    debug_data: Optional[dict] = None
+
+#DesignerChat api request and response
+class DesignerChatRequest(BaseModel):
+    query: Optional[str] = None
+    context: Optional[dict] = None
+    user: Optional[str] = None
+
+class DesignerChatResponse(BaseModel):
     id: str
     response: str
     debug_data: Optional[dict] = None
@@ -47,3 +58,4 @@ class LogEventRequest(BaseModel):
     type: str
     completion_id: str
     choice_index: int
+    
