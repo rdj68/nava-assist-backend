@@ -2,7 +2,6 @@ import vertexai
 from vertexai.language_models import CodeGenerationModel, CodeChatModel
 from vertexai.preview.generative_models import GenerativeModel
 
-
 class GeckoClient:
     def __init__(self):
         vertexai.init()
