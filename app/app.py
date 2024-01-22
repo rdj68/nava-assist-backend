@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     """
     initialize crucial application services 
     """
-    os.environ.clear()
+    # os.environ.clear()
     load_dotenv(".env")
     db_client = AsyncIOMotorClient(os.getenv("MONGO_URI"))
     vertexai.init()
@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
     await init_beanie(database=db_client.get_database("nava-assist-backend"), document_models=[User])
 
     yield
-    os.environ.clear()
+    # os.environ.clear()
 
 
 app = FastAPI(
