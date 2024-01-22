@@ -12,7 +12,7 @@ class UserService:
             username=user.username,
             email=user.email,
             hashed_password=get_password(user.password),
-            phone_number=user.phone_number,
+            phone=user.phone,
             additional_info=user.additional_info,
         )
         await user_in.save()
@@ -29,10 +29,10 @@ class UserService:
         return user
 
     @staticmethod
-    async def authenticate_by_phone_number(
-        phone_number: str, password: str
+    async def authenticate_by_phone(
+        phone: str, password: str
     ) -> Optional[User]:
-        user = await UserService.get_user_by_phone_number(phone_number=phone_number)
+        user = await UserService.get_user_by_phone(phone=phone)
         if not user:
             return None
         if not verify_password(password=password, hashed_pass=user.hashed_password):
@@ -46,8 +46,8 @@ class UserService:
         return user
 
     @staticmethod
-    async def get_user_by_phone_number(phone_number: str) -> Optional[User]:
-        user = await User.find_one(User.phone_number == phone_number)
+    async def get_user_by_phone(phone: str) -> Optional[User]:
+        user = await User.find_one(User.phone == phone)
         return user
 
     @staticmethod

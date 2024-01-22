@@ -8,3 +8,4 @@ python-decouple
 passlib
 beanie
 twilio
+python-jose

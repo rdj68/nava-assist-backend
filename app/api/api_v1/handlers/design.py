@@ -1,23 +1,27 @@
 from fastapi import APIRouter
 import uuid
-
-from app.services.ai_client import GeminiClient
+from app.services.ai_client import gemini_client
 from app.schemas.design_schema import DesignerChatRequest, DesignerChatResponse
+from app.schemas.auth_schema import TokenPayload
+from fastapi import Depends
+from app.api.deps.auth_deps import authenticate
 
 
 router = APIRouter()
-geminiClient = GeminiClient()
 
 
 @router.post("/designchat", response_model=DesignerChatResponse)
-async def designerchat(request_body: DesignerChatRequest):
+async def designerchat(
+    request_body: DesignerChatRequest,
+    tokenPayload: TokenPayload = Depends(authenticate),
+):
     prompt = (
         "{"
         + f"message: {request_body.query},"
         + f"context: {request_body.context}"
         + "}"
     )
-    responses = await geminiClient.prompt(prompt)
+    responses = await gemini_client.prompt(prompt)
     all_text_responses = []
     async for response in responses:
         if response.candidates:

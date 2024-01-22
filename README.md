@@ -18,7 +18,7 @@ To run this project, follow these steps:
 
 2. **Activate virtual environment**
    ```bash
-   source venv/bin/activate
+   source .venv/bin/activate
    ```
 
 3. **Install Dependencies:**

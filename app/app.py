@@ -5,6 +5,9 @@ from app.core.config import settings
 from app.models.user_model import User
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.api.api_v1.router import main_router
+from app.services.ai_client import initialize_clients
+from dotenv import load_dotenv
+import os
 
 
 @asynccontextmanager
@@ -12,14 +15,14 @@ async def lifespan(app: FastAPI):
     """
     initialize crucial application services
     """
+    load_dotenv()
+    db_client = AsyncIOMotorClient(settings.MONGO_URI)
+    initialize_clients()
 
-    db_client = AsyncIOMotorClient(settings.MONGO_CONNECTION_STRING).fodoist
-
-    await init_beanie(database=db_client, document_models=[User])
+    await init_beanie(database=db_client.get_database("nava-assist-backend"), document_models=[User])
 
     yield
-
-    await db_client.close()
+    db_client.close()
 
 
 app = FastAPI(
