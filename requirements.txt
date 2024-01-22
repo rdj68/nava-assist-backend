@@ -9,3 +9,7 @@ passlib
 beanie
 twilio
 python-jose
+python-dotenv
+python-decouple
+pydantic-settings
+pydantic[email]

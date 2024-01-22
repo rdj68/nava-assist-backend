@@ -11,7 +11,7 @@
                     "auth"
                 ],
                 "summary": "Create account of user and send otp on the phone number",
-                "operationId": "login_v1_auth_signup_post",
+                "operationId": "signup_v1_auth_signup_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -69,7 +69,89 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/tokenResponse"
+                                    "$ref": "#/components/schemas/VerifyPhoneResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Login user and get user info ",
+                "operationId": "login_v1_auth_login_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/refresh-token": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh token",
+                "operationId": "refresh_token_handler_v1_auth_refresh_token_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RefreshTokenRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TokenResponse"
                                 }
                             }
                         }
@@ -587,6 +669,42 @@
                 ],
                 "title": "LogEventRequest"
             },
+            "LoginRequest": {
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email",
+                        "description": "user email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 24,
+                        "minLength": 5,
+                        "title": "Password",
+                        "description": "user password"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "title": "LoginRequest"
+            },
+            "RefreshTokenRequest": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id"
+                ],
+                "title": "RefreshTokenRequest"
+            },
             "SignUpRequest": {
                 "properties": {
                     "email": {
@@ -648,6 +766,87 @@
                 ],
                 "title": "SignUpResponse"
             },
+            "TokenResponse": {
+                "properties": {
+                    "jwt_token": {
+                        "type": "string",
+                        "title": "Jwt Token"
+                    },
+                    "expires_in": {
+                        "type": "integer",
+                        "title": "Expires In"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "jwt_token",
+                    "expires_in"
+                ],
+                "title": "TokenResponse"
+            },
+            "User": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "title": "Phone"
+                    },
+                    "additional_info": {
+                        "anyOf": [
+                            {},
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Additional Info"
+                    },
+                    "sessions": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Sessions"
+                    },
+                    "token": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Token"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id",
+                    "username",
+                    "email",
+                    "phone"
+                ],
+                "title": "User"
+            },
             "ValidationError": {
                 "properties": {
                     "loc": {
@@ -702,6 +901,40 @@
                 ],
                 "title": "VerifyPhoneRequest"
             },
+            "VerifyPhoneResponse": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "username": {
+                        "type": "string",
+                        "title": "Username"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "title": "Email"
+                    },
+                    "jwt_token": {
+                        "type": "string",
+                        "title": "Jwt Token"
+                    },
+                    "expires_in": {
+                        "type": "integer",
+                        "title": "Expires In"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id",
+                    "username",
+                    "email",
+                    "jwt_token",
+                    "expires_in"
+                ],
+                "title": "VerifyPhoneResponse"
+            },
             "Version": {
                 "properties": {
                     "build_date": {
@@ -729,24 +962,6 @@
                     "git_describe"
                 ],
                 "title": "Version"
-            },
-            "tokenResponse": {
-                "properties": {
-                    "jwt_token": {
-                        "type": "string",
-                        "title": "Jwt Token"
-                    },
-                    "expires_in": {
-                        "type": "integer",
-                        "title": "Expires In"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "jwt_token",
-                    "expires_in"
-                ],
-                "title": "tokenResponse"
             }
         }
     }

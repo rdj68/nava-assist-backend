@@ -1,13 +1,14 @@
 from vertexai.language_models import CodeGenerationModel, CodeChatModel
 from vertexai.preview.generative_models import GenerativeModel
-import vertexai
+
 
 class GeckoClient:
     def __init__(self):
         self.model = CodeGenerationModel.from_pretrained("code-gecko@latest")
 
     async def prompt(self, prefix, suffix):
-        parameters = {"candidate_count": 1, "max_output_tokens": 64, "temperature": 0.9}
+        parameters = {"candidate_count": 1,
+                      "max_output_tokens": 64, "temperature": 0.9}
         response = await self.model.predict_async(prefix, suffix=suffix, **parameters)
         return response
 
@@ -38,14 +39,6 @@ class GeminiClient:
         return response
 
 
-gecko_client: GeckoClient | None = None
-gemini_client: GeminiClient | None = None
-bison_client: BisonClient | None = None
-
-def initialize_clients():
-    global gecko_client, gemini_client, bison_client
-    vertexai.init()
-    
-    gecko_client = GeckoClient()
-    gemini_client = GeminiClient()
-    bison_client = BisonClient()
+gecko_client = GeckoClient()
+bison_client = BisonClient()
+gemini_client = GeminiClient()

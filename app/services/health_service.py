@@ -3,6 +3,7 @@ import os
 import socket
 from app.schemas.general_schema import HealthState, Version
 
+
 def get_cpu_info():
     # This is a placeholder. Replace with your method of getting CPU info.
     return "Intel(R) Core(TM) i7-9750H CPU @ 2.60GHz"

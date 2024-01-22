@@ -1,16 +1,20 @@
 from typing import Optional
 from datetime import datetime
-from uuid import UUID, uuid4
+from uuid import uuid4
 from beanie import Document, Indexed
 from pydantic import Field, EmailStr
 
 class User(Document):
-    user_id: UUID = Field(default_factory=uuid4)
+    user_id: str = Field(default_factory= lambda: uuid4().hex)
     username: Indexed(str, unique=False)
     email: Indexed(EmailStr, unique=True)
     phone: Indexed(str, unique=True)
     hashed_password: str
-    disabled: Optional[bool] = None
+    disabled: Optional[bool] = False
+    sessions: Optional[list[str]] = None
+    additional_info: Optional[dict[str, str]] = None
+    token: Optional[str] = None
+    verified: Optional[bool] = False
     
     def __repr__(self) -> str:
         return f"<User {self.email}>"
@@ -36,3 +40,4 @@ class User(Document):
     
     class Settings:
         collection = "users"
+

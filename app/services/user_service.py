@@ -1,5 +1,4 @@
 from typing import Optional
-from uuid import UUID
 from app.schemas.auth_schema import SignUpRequest
 from app.models.user_model import User
 from app.core.security import get_password, verify_password
@@ -15,8 +14,19 @@ class UserService:
             phone=user.phone,
             additional_info=user.additional_info,
         )
+        
+        # Check if user already exists in db
+        user = UserService.get_user_by_email(email=user.email)
+        if user:
+            return user
+        
         await user_in.save()
         return user_in
+
+    @staticmethod
+    async def update_user(user: User):
+        await user.save()
+        return user
 
     @staticmethod
     async def authenticate_by_email(email: str, password: str) -> Optional[User]:
@@ -51,6 +61,6 @@ class UserService:
         return user
 
     @staticmethod
-    async def get_user_by_id(id: UUID) -> Optional[User]:
+    async def get_user_by_id(id: str) -> Optional[User]:
         user = await User.find_one(User.user_id == id)
         return user

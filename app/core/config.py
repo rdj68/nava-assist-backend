@@ -8,7 +8,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 30  # 30 days
     PROJECT_NAME: str = "NAVA-ASSIST-BACKEND"
-    MONGO_URI: str = config("MONGO_URI", cast=str)
+
+    # Twilio
+    TWILIO_ACCOUNT_SID: str = config("TWILIO_ACCOUNT_SID", cast=str)
+    TWILIO_AUTH_TOKEN: str = config("TWILIO_AUTH_TOKEN", cast=str)
+    TWILIO_SERVICE_SID: str = config("TWILIO_SERVICE_SID", cast=str)
 
     class Config:
         case_sensitive = True

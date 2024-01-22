@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
 from typing import List, Optional
-
+from pydantic import BaseModel
 
 # completion api request and response
+
+
 class CompletionRequest(BaseModel):
     language: Optional[str] = None
     segments: Optional[dict] = None

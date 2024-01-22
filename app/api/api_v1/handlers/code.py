@@ -1,27 +1,36 @@
-from fastapi import APIRouter
 import uuid
 import os
+from fastapi import APIRouter
 from fastapi import Depends
 from app.api.deps.auth_deps import authenticate
 from app.services.ai_client import gecko_client, bison_client
-from app.schemas.code_schema import CompletionRequest, CompletionResponse, ChatRequest, ChatResponse
+from app.schemas.code_schema import (
+    CompletionRequest,
+    CompletionResponse,
+    ChatRequest,
+    ChatResponse,
+)
 from app.schemas.auth_schema import TokenPayload
 
 router = APIRouter()
 
 
 @router.post("/completions", response_model=CompletionResponse)
-async def completion(request_body: CompletionRequest, tokenPayload: TokenPayload = Depends(authenticate)):
+async def completion(
+    request_body: CompletionRequest, token_payload: TokenPayload = Depends(authenticate)
+):
     prefix = request_body.segments.get("prefix", None)
     suffix = request_body.segments.get("suffix", None)
-
 
     response = await gecko_client.prompt(prefix, suffix)
     completion_response = get_completion_response(response.text)
     return completion_response
 
+
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request_body: ChatRequest, tokenPayload: TokenPayload = Depends(authenticate)):
+async def chat(
+    request_body: ChatRequest, token_payload: TokenPayload = Depends(authenticate)
+):
     user_query = request_body.userQuery
     context_params = request_body.context
     entireContent = {context_params.get("entireContent", {})} if context_params else ""

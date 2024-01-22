@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from jose import JWTError, jwt
 from app.core.config import settings
 from app.schemas.auth_schema import TokenPayload
