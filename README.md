@@ -30,7 +30,7 @@ To run this project, follow these steps:
 
 4. **Run the Server:**
    ```bash
-   uvicorn server:app
+   uvicorn app.app:app
    ```
 
    This command starts the server using Uvicorn.
