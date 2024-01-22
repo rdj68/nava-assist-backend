@@ -16,16 +16,31 @@ To run this project, follow these steps:
 
    This command creates a Python virtual environment in the `.venv` folder.
 
-2. **Install Dependencies:**
+2. **Activate virtual environment**
+   ```bash
+   source .venv/bin/activate
+   ```
+
+3. **Install Dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
    This command installs the required dependencies for the project.
 
-3. **Run the Server:**
+4. **Run the Server:**
    ```bash
-   uvicorn server:app
+   uvicorn app.app:app
    ```
 
    This command starts the server using Uvicorn.
+
+####Setting up .env
+- Create a file named ".env" in the root directory.
+
+- Add the following lines to the file.
+   ```
+   GOOGLE_APPLICATION_CREDENTIALS =
+   JWT_SECRET_KEY=
+   MONGO_CONNECTION_STRING=
+   ```
