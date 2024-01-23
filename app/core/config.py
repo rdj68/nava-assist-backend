@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     TWILIO_ACCOUNT_SID: str = config("TWILIO_ACCOUNT_SID", cast=str)
     TWILIO_AUTH_TOKEN: str = config("TWILIO_AUTH_TOKEN", cast=str)
     TWILIO_SERVICE_SID: str = config("TWILIO_SERVICE_SID", cast=str)
+    CORS_ORIGINS: list = ["*"]
 
     class Config:
         case_sensitive = True
