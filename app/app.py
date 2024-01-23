@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     """
     initialize crucial application services 
     """
-    os.environ.clear()
+    # os.environ.clear()
     load_dotenv(".env")
     db_client = AsyncIOMotorClient(os.getenv("MONGO_URI"))
     vertexai.init()
