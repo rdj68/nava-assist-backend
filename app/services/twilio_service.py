@@ -9,7 +9,6 @@ class TwilioService:
 
     def send_otp(self, to_number: str):
         try:
-            print(to_number)
             verification = self.client.verify.services(self.service_sid).verifications.create(
                 to="+91" + to_number,
                 channel='sms'  # You can also use 'call' or 'email' here

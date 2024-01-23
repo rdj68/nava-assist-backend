@@ -18,7 +18,6 @@ class UserService:
         # Check if user already exists in db
         user = await UserService.get_user_by_email(email=user.email)
         if user is not None:
-            print("user exists")
             return user
         
         await user_in.save()
