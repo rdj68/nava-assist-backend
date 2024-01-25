@@ -16,16 +16,20 @@ class GeckoClient:
 class BisonClient:
     def __init__(self):
         self.model = CodeChatModel.from_pretrained("codechat-bison@001")
-        self.chat = self.model.start_chat(
-            context="You are Nava Assist, an AI assistant for developers.You can write, explain and generate code and answer any user queries."
-        )
 
-    async def prompt(self, promptMessage):
+    async def prompt(self, prompt_message: str, history: list = []):
         parameters = {
             "temperature": 0.5,
             "max_output_tokens": 500,
         }
-        response = await self.chat.send_message_async(promptMessage, **parameters)
+        
+        chat = self.model.start_chat(
+            context="You are Nava Assist, an AI assistant for developers.You can write, explain and generate code and answer any user queries.",
+            message_history=history
+        )
+        response = await chat.send_message_async(prompt_message, **parameters)
+        
+        del chat
         return response
 
 

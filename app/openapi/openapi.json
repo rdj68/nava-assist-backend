@@ -215,8 +215,8 @@
                 "tags": [
                     "code"
                 ],
-                "summary": "Chat",
-                "operationId": "chat_v1_chat_post",
+                "summary": "Code Chat",
+                "operationId": "code_chat_v1_chat_post",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -262,7 +262,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/DesignerChatRequest"
+                                "$ref": "#/components/schemas/ChatRequest"
                             }
                         }
                     },
@@ -274,7 +274,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/DesignerChatResponse"
+                                    "$ref": "#/components/schemas/ChatResponse"
                                 }
                             }
                         }
@@ -357,7 +357,7 @@
         "schemas": {
             "ChatRequest": {
                 "properties": {
-                    "userQuery": {
+                    "chat_id": {
                         "anyOf": [
                             {
                                 "type": "string"
@@ -366,7 +366,11 @@
                                 "type": "null"
                             }
                         ],
-                        "title": "Userquery"
+                        "title": "Chat Id"
+                    },
+                    "query": {
+                        "type": "string",
+                        "title": "Query"
                     },
                     "context": {
                         "anyOf": [
@@ -378,28 +382,6 @@
                             }
                         ],
                         "title": "Context"
-                    },
-                    "user": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "User"
-                    },
-                    "debug_options": {
-                        "anyOf": [
-                            {
-                                "type": "object"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Debug Options"
                     }
                 },
                 "type": "object",
@@ -407,29 +389,18 @@
             },
             "ChatResponse": {
                 "properties": {
-                    "id": {
+                    "chat_id": {
                         "type": "string",
-                        "title": "Id"
+                        "title": "Chat Id"
                     },
                     "response": {
                         "type": "string",
                         "title": "Response"
-                    },
-                    "debug_data": {
-                        "anyOf": [
-                            {
-                                "type": "object"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Debug Data"
                     }
                 },
                 "type": "object",
                 "required": [
-                    "id",
+                    "chat_id",
                     "response"
                 ],
                 "title": "ChatResponse"
@@ -515,74 +486,6 @@
                     "choices"
                 ],
                 "title": "CompletionResponse"
-            },
-            "DesignerChatRequest": {
-                "properties": {
-                    "query": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Query"
-                    },
-                    "context": {
-                        "anyOf": [
-                            {
-                                "type": "object"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Context"
-                    },
-                    "user": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "User"
-                    }
-                },
-                "type": "object",
-                "title": "DesignerChatRequest"
-            },
-            "DesignerChatResponse": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "title": "Id"
-                    },
-                    "response": {
-                        "type": "string",
-                        "title": "Response"
-                    },
-                    "debug_data": {
-                        "anyOf": [
-                            {
-                                "type": "object"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Debug Data"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "id",
-                    "response"
-                ],
-                "title": "DesignerChatResponse"
             },
             "HTTPValidationError": {
                 "properties": {
