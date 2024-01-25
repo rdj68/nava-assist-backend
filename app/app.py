@@ -11,11 +11,13 @@ from app.models.chat_model import Chat
 from app.api.api_v1.router import main_router
 from fastapi.middleware.cors import CORSMiddleware
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     initialize crucial application services 
     """
+    # os.environ.clear()
     load_dotenv(".env")
     db_client = AsyncIOMotorClient(os.getenv("MONGO_URI"))
     vertexai.init()

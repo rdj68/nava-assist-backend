@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post("/completions", response_model=CompletionResponse)
 async def completion(
-    request_body: CompletionRequest, _ : TokenPayload = Depends(authenticate)
+    request_body: CompletionRequest, _: TokenPayload = Depends(authenticate)
 ):
     prefix = request_body.segments.get("prefix", None)
     suffix = request_body.segments.get("suffix", None)
@@ -54,27 +54,24 @@ async def code_chat(
 
     history = []
     chat = None
-    
-    # fetch chat history from database if chat_id is present
-    if request_body.chat_id is not None:
-        # fetch chat history from database
-        chat = await ChatService.get_chat_by_session_id(request_body.chat_id)
+
+    # fetch chat history from database if chat_session_id is present
+    if request_body.chat_session_id is not None:
+        chat = await ChatService.get_chat_by_session_id(request_body.chat_session_id)
         if chat is not None:
             history = chat.history
 
-    # pass the history to bison client
-    # NOTE: bison client will return response and update the history with the response and request
+    # prompt the model with the user query and history
     response = await bison_client.prompt(prompt, history=history)
-    
-    if history == []:
-        history.append(ChatMessage(author="user", content=user_query))
-        history.append(ChatMessage(author="bot", content=response.text))
-    print("prompt", prompt)
-        
+
+    # messages to append to chat history
+    messages = []
+    messages.append(ChatMessage(author="user", content=user_query))
+    messages.append(ChatMessage(author="bot", content=response.text))
 
     try:
-        if request_body.chat_id is not None:
-            chat = await ChatService.update_chat(request_body.chat_id, history)
+        if request_body.chat_session_id is not None:
+            chat = await ChatService.append_message_to_chat(request_body.chat_session_id, messages)
         else:
             chat = await ChatService.create_chat(token_payload["sub"], history=history)
     except Exception as e:
@@ -82,7 +79,8 @@ async def code_chat(
             status_code=500, detail=f"Error saving chat history: {e}") from e
 
     # return the response
-    chat_response = ChatResponse(chat_id=chat.chat_session_id, response= response.text)
+    chat_response = ChatResponse(
+        chat_session_id=chat.chat_session_id, response=response.text)
     return chat_response.model_dump()
 
 
