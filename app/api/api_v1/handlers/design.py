@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 import uuid
 from app.services.ai_client import gemini_client
-from app.schemas.design_schema import DesignerChatRequest, DesignerChatResponse
+from app.schemas.chat_schema import ChatRequest, ChatResponse
 from app.schemas.auth_schema import TokenPayload
 from fastapi import Depends
 from app.api.deps.auth_deps import authenticate
@@ -10,9 +10,9 @@ from app.api.deps.auth_deps import authenticate
 router = APIRouter()
 
 
-@router.post("/designchat", response_model=DesignerChatResponse)
+@router.post("/designchat", response_model=ChatResponse)
 async def designerchat(
-    request_body: DesignerChatRequest,
+    request_body: ChatRequest,
     tokenPayload: TokenPayload = Depends(authenticate),
 ):
     prompt = (
@@ -33,7 +33,7 @@ async def designerchat(
 
     combined_response = " ".join(all_text_responses)
 
-    chat_response = DesignerChatResponse(
+    chat_response = ChatResponse(
         id=str(uuid.uuid4()),
         response=combined_response,
     )

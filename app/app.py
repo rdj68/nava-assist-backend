@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import vertexai
 from app.core.config import settings
 from app.models.user_model import User
+from app.models.chat_model import Chat
 from app.api.api_v1.router import main_router
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,12 +16,11 @@ async def lifespan(app: FastAPI):
     """
     initialize crucial application services 
     """
-    # os.environ.clear()
     load_dotenv(".env")
     db_client = AsyncIOMotorClient(os.getenv("MONGO_URI"))
     vertexai.init()
 
-    await init_beanie(database=db_client.get_database("nava-assist-backend"), document_models=[User])
+    await init_beanie(database=db_client.get_database("nava-assist-backend"), document_models=[User, Chat])
 
     yield
     # os.environ.clear()

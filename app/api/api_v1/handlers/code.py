@@ -1,23 +1,23 @@
-import uuid
+from uuid import uuid4
 import os
-from fastapi import APIRouter
-from fastapi import Depends
+from vertexai.language_models import ChatMessage
+from fastapi import APIRouter, Depends, HTTPException
 from app.api.deps.auth_deps import authenticate
 from app.services.ai_client import gecko_client, bison_client
 from app.schemas.code_schema import (
     CompletionRequest,
-    CompletionResponse,
-    ChatRequest,
-    ChatResponse,
+    CompletionResponse
 )
+from app.schemas.chat_schema import (ChatRequest, ChatResponse)
 from app.schemas.auth_schema import TokenPayload
+from app.services.chat_service import ChatService
 
 router = APIRouter()
 
 
 @router.post("/completions", response_model=CompletionResponse)
 async def completion(
-    request_body: CompletionRequest, token_payload: TokenPayload = Depends(authenticate)
+    request_body: CompletionRequest, _ : TokenPayload = Depends(authenticate)
 ):
     prefix = request_body.segments.get("prefix", None)
     suffix = request_body.segments.get("suffix", None)
@@ -28,12 +28,13 @@ async def completion(
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(
+async def code_chat(
     request_body: ChatRequest, token_payload: TokenPayload = Depends(authenticate)
 ):
-    user_query = request_body.userQuery
+    user_query = request_body.query
     context_params = request_body.context
-    entireContent = {context_params.get("entireContent", {})} if context_params else ""
+    entireContent = {context_params.get(
+        "entireContent", {})} if context_params else ""
     selectedContent = (
         {context_params.get("selectedContent", {})} if context_params else ""
     )
@@ -50,13 +51,41 @@ async def chat(
         + "}"
         + "}"
     )
-    response = await bison_client.prompt(prompt)
-    chat_response = ChatResponse(
-        id=str(uuid.uuid4()), response=response.text, debug_data=None
-    )
-    return chat_response
+
+    history = []
+    chat = None
+    
+    # fetch chat history from database if chat_id is present
+    if request_body.chat_id is not None:
+        # fetch chat history from database
+        chat = await ChatService.get_chat_by_session_id(request_body.chat_id)
+        if chat is not None:
+            history = chat.history
+
+    # pass the history to bison client
+    # NOTE: bison client will return response and update the history with the response and request
+    response = await bison_client.prompt(prompt, history=history)
+    
+    if history == []:
+        history.append(ChatMessage(author="user", content=user_query))
+        history.append(ChatMessage(author="bot", content=response.text))
+    print("prompt", prompt)
+        
+
+    try:
+        if request_body.chat_id is not None:
+            chat = await ChatService.update_chat(request_body.chat_id, history)
+        else:
+            chat = await ChatService.create_chat(token_payload["sub"], history=history)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error saving chat history: {e}") from e
+
+    # return the response
+    chat_response = ChatResponse(chat_id=chat.chat_session_id, response= response.text)
+    return chat_response.model_dump()
 
 
 def get_completion_response(text: str):
     choices = [{"index": 0, "text": text}]
-    return CompletionResponse(id=str(uuid.uuid4()), choices=choices, debug_data=None)
+    return CompletionResponse(id=str(uuid4()), choices=choices, debug_data=None)

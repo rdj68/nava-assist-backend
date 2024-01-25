@@ -1,4 +1,5 @@
 from cachetools import TTLCache
+from cachetools import LRUCache
 
 class CacheService:
     def __init__(self):
@@ -9,3 +10,4 @@ class CacheService:
 
     def set(self, key, value):
         self.cache[key] = value
+        self.cache

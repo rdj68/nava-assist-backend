@@ -61,6 +61,6 @@ class UserService:
         return user
 
     @staticmethod
-    async def get_user_by_id(id: str) -> Optional[User]:
-        user = await User.find_one(User.user_id == id)
+    async def get_user_by_id(user_id: str) -> Optional[User]:
+        user = await User.find_one(User.user_id == user_id)
         return user
