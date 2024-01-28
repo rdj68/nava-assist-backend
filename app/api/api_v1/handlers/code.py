@@ -73,7 +73,7 @@ async def code_chat(
         if request_body.chat_session_id is not None:
             chat = await ChatService.append_message_to_chat(request_body.chat_session_id, messages)
         else:
-            chat = await ChatService.create_chat(token_payload["sub"], history=history)
+            chat = await ChatService.create_chat(token_payload["sub"], messages)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error saving chat history: {e}") from e
